@@ -22,10 +22,11 @@ public class GameSystem : MonoBehaviour {
 	// These are private and game-specific. They should not be visible outside of this class.
 	private Season season;
 	private List<Player> players = new List<Player>();
+	private CardController cardController = new CardController();
 	
 	// These are game-specific, but the rendering scripts will need access to these by using getters.
 	private Vector2 currentWeather;
-	private Sprite currentWeatherSprite;
+	private Sprite currentWeatherSprite; // won't be a sprite, but an anim
 	private Player currentTurnOwner;
 	private Player currentMoveOwner;
 	
@@ -33,7 +34,7 @@ public class GameSystem : MonoBehaviour {
 	private Vector2 neutral = new Vector2(0, 0);
 	
 	public Vector2 getCurrentWeather() { return currentWeather; }
-	public Sprite getCurrentWeatherSprite() { return currentWeatherSprite; }
+	public Sprite getCurrentWeatherSprite() { return currentWeatherSprite; } // again, will be an anim?
 	public Player getCurrenturnOwner() { return currentTurnOwner; }
 	public Player getCurrentMoveOwner() { return currentMoveOwner; }
 	
@@ -84,13 +85,25 @@ public class GameSystem : MonoBehaviour {
 			{
 				currentMoveOwner = moveOwner; // Allows access to the current MoveOwner outside of the loop.
 				
-				/* LEAVE THIS COMMENTED UNTIL THIS BOOLEAN CAN BE CHANGED.
-                while (!moveOwner.hasCommittedCards)
+				// LEAVE THIS COMMENTED UNTIL THIS BOOLEAN CAN BE CHANGED.
+                while (!currentMoveOwner.hasCommittedCards)
                 {
-                    Debug.Log("Waiting for " + moveOwner.characterName + " to play cards.");
+                    Debug.Log("Waiting for " + currentMoveOwner.characterName + " to play cards.");
+
+					// Display the cards that currentMoveOwner has in his/her hand:
+					for(int i = 0; i < currentMoveOwner.hand.Count - 1; i++) {
+						cardController.translateVectorToDICard(currentMoveOwner.hand[i], i + 1);
+					}
+
+					// Prompt the currentMoveOwner to play
+					// ...prompt here...
+
+
+
+					currentMoveOwner.hasCommittedCards = true;
+					Debug.Log("Waiting for " + currentMoveOwner.characterName + " to play cards.");
                 }
-                */
-				moveOwner.hasCommittedCards = false;
+                //
 			}
 			/* LEAVE THIS COMMENTED UNTIL THE BOOLEAN CAN BE CHANGED.
             while (!turnOwner.hasCommittedCards)
@@ -189,6 +202,7 @@ public class GameSystem : MonoBehaviour {
 	}
 	
 	// generates a a list of players that does not include the current player.
+	// datnamedohuehuehuehue (it works)
 	private List<Player> generateListOfPlayersExcludingCurrentTurnOwner(int indexOfExcludedPlayer)
 	{
 		List<Player> listOfPlayersExcludingCurrentTurnOwner = new List<Player>();
